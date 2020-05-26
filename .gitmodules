@@ -1,0 +1,6 @@
+[submodule "lib/AVR-LCD-4Bits"]
+	path = lib/AVR-LCD-4Bits
+	url = https://github.com/AhmedShaalan/AVR-LCD-4Bits
+[submodule "lib/AVR-UART"]
+	path = lib/AVR-UART
+	url = https://github.com/AhmedShaalan/AVR-UART
