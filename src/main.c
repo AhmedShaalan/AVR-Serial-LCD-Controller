@@ -11,26 +11,45 @@ void initIO(void) {
 
 int main(void) {
     initIO();
-
     // used to store comming instruction
-    uint8_t receivedData = 0;
+    uint8_t data = 0;
+
+    // used to indicate that I received control char
+    uint8_t receivedLCDControlChar = 0;
 
     lcd_init();
+
     UART_initRx();
 
     while (1) {
-        // wait for instruction
-        receivedData = UART_readChar();
+        data = UART_getChar();
 
-        // check if the instruction is a command
-        if (receivedData == CONTROL_CHAR) {
-
-            // forward the command to the LCD
-            lcd_exe_instruction(COMMAND_INSTRUCTION, UART_readChar());
+        // check if the buffer is empty
+        if (data == UART_BUFFER_EMPTY) {
             continue;
         }
 
-        // print if not command
-        lcd_exe_instruction(DATA_INSTRUCTION, receivedData);
+        // check if received data is LCD control char
+        if (data == CONTROL_CHAR) {
+
+            // set control char flag
+            receivedLCDControlChar = 1;
+
+            // continue to get next char
+            continue;
+        }
+
+        // check if LCD control char is set
+        if (receivedLCDControlChar == 1) {
+
+            // forward the command to the LCD
+            lcd_exe_instruction(COMMAND_INSTRUCTION, data);
+
+            receivedLCDControlChar = 0;
+            continue;
+        }
+
+        // print if received data is not command
+        lcd_exe_instruction(DATA_INSTRUCTION, data);
     }
 }
